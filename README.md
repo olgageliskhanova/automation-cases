@@ -1,6 +1,6 @@
 # Automation Cases
 
-Публичное портфолио кейсов по автоматизации и AI-инжинирингу. Пять production-проектов: AI-боты с RAG, генерация контента, конкурентная разведка, обработка лидов.
+Публичное портфолио кейсов по автоматизации и AI-инжинирингу. Шесть production-проектов: AI-боты с RAG, генерация контента, конкурентная разведка, обработка лидов, гибридная транскрипция речи.
 
 Имена клиентов, внутренних сервисов, customer-данные удалены. Фокус — на архитектурных решениях, выборе технологий и trade-off'ах.
 
@@ -15,15 +15,16 @@
 | 03 | [AI Instagram Carousel Generator](./03-carousel-generator/) | n8n · AI image gen · async polling · chunked upload | Async batch-пайплайн с rate-limit handling |
 | 04 | [Instagram Competitor Reels Tracker](./04-competitor-tracker/) | n8n · Apify · ScrapeCreators · Airtable · Supabase | Outlier detection по personal baseline |
 | 05 | [Lead Intake Automation](./05-lead-intake/) | Albato / Make · amoCRM · Telegram · Gmail | Валидация, дедуп, multi-channel роутинг |
+| 06 | [Transcribe Bot для команды](./06-transcribe-bot/) | Python · python-telegram-bot · Groq + faster-whisper · SQLite · yt-dlp | Очередь с атомарным claim, subs-first, hybrid STT с fallback |
 
 ---
 
 ## Tech Stack
 
-**Automation:** n8n · Make · Albato · Webhooks
-**AI:** Vertex AI · Gemini · OpenAI · pgvector · Whisper
+**Automation:** n8n · Make · Albato · Webhooks · SQLite-очереди
+**AI:** Vertex AI · Gemini · OpenAI · Qwen (ModelScope) · pgvector · Whisper · Groq Whisper-v3-turbo
 **Data:** Supabase · Airtable · Google Sheets API
-**Scraping:** Apify · ScrapeCreators
+**Scraping:** Apify · ScrapeCreators · yt-dlp
 **Messaging:** Telegram Bot API · WhatsApp (через Wazzup)
 **CRM:** amoCRM · Bitrix24
 
@@ -36,6 +37,8 @@
 - **Async polling вместо блокирующих ожиданий** — для image generation, video processing, любых долгих внешних API
 - **Sheet как content store** — чтобы не-технические сотрудники могли править тексты без касания n8n
 - **Два источника данных для критичных пайплайнов** — Apify + ScrapeCreators для парсинга, чтобы при падении одного работала вторая ветка
+- **Резервный движок вместо отказа** — критичные операции (распознавание речи) имеют запасной локальный движок: при сбое или лимите основного облачного задача доделывается, а не теряется
+- **Пропускать дорогую работу, когда можно** — если у видео уже есть субтитры, расшифровка обходит распознавание целиком: экономия CPU, трафика и диска
 
 ---
 
