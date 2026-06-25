@@ -56,18 +56,3 @@ flowchart LR
 | **10-дневный цикл вместо ежедневных текстов** | Поздравления повторяются раз в 10 дней — это не раздражает аудиторию (вряд ли кто помнит, что писалось 10 дней назад) и сильно экономит контент-работы. |
 | **Cron в TZ Istanbul, не UTC** | Получатели — Турция. n8n понимает named timezone напрямую, без ручной коррекции на летнее/зимнее время. |
 | **2 разных workflow'а, не один с if-веткой** | Каждый можно остановить, отладить, заменить независимо. Видно в Executions кто и когда отправил. |
-
----
-
-## Скриншоты
-
-### Morning Greeting · 10:00 IST · sendPhoto
-
-![Morning Greeting](./screenshots/morning.png)
-
-### Evening Greeting · 22:00 IST · sendMessage
-
-![Evening Greeting](./screenshots/evening.png)
-
-Каждый workflow — четыре ноды: Schedule → Compute Day → Lookup Sheet Row → Telegram send.
-Намеренно простой пайплайн без gateway'ев и transforms, чтобы вероятность сбоя стремилась к нулю.

@@ -82,23 +82,3 @@ Cron-trigger каждую минуту забирает диалоги, гото
 | Operator takeover gate | Как только оператор написал — бот замолкает в этом диалоге автоматически, без ручной паузы. |
 | AI Memory per conversation | Бот помнит контекст диалога между сессиями, не задаёт уже отвеченные вопросы. |
 | Suppressed-флаг | Возможность точечно отключить бота в конкретном диалоге, не трогая основной workflow. |
-
----
-
-## Скриншоты
-
-### Ingest workflow
-
-![Support Bot Ingest](./screenshots/ingest.png)
-
-Единая точка входа для 3 каналов: webhook → нормализация payload'а к общему формату →
-Switch по типу отправителя (user / operator / bot) → роутинг в нужный RPC → HTTP 200.
-
-### Processor workflow
-
-![Support Bot Processor](./screenshots/processor.png)
-
-AI-пайплайн с fallback-ветками: cron 1 мин → Vertex Embedding (при сбое →
-пауза бота + алерт оператору) → сборка контекста → Gemini generate (тот же fallback) →
-gate «нужен оператор?» → Switch by source → отправка в правильный канал →
-обновление AI-памяти.

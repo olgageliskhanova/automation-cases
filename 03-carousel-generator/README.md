@@ -70,12 +70,3 @@ flowchart LR
 | **Sheet как orchestration UI** | Контент-команда правит контент-план прямо в таблице, n8n триггерится по «опубликовать» галочке. |
 | **Rate-limit delay в error-ветке** | При 429 от image API workflow ждёт N секунд и продолжает, а не валит весь batch. |
 | **CDN storage для банкеров** | Нужен для повторного использования (например, картинка на лендинге = картинка в IG карусели) без ре-генерации. |
-
----
-
-## Скриншот
-
-![Carousel Generator](./screenshots/carousel.png)
-
-Контент-план в Google Sheets → Prompt Builder под каждый слайд → AI image task с polling готовности →
-chunked upload в IG → CDN storage. Внизу error-ветка с rate-limit delay для устойчивости при сбоях API.
