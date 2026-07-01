@@ -96,6 +96,16 @@ Edge-TTS даёт нативное произношение на всех чет
 
 Контроль встроен в каждый шаг, а не приклеен отчётом в конце. Полный список — по фазам:
 
+```mermaid
+flowchart TB
+  TXT["До синтеза (текст):<br/>presenter-check → EN-adequacy → семантич. нарезка →<br/>перевод + native-gate → детерминир. проверки →<br/>pre-TTS чистка → гарды закрывающих фраз"]
+  TXT --> TM["Тайминг:<br/>курсорная укладка + План B (хвост не режется)"]
+  TM --> GATE{"БЛОКИРУЮЩИЙ ГЕЙТ<br/>DUR · TAIL · FULLDUB · EDGES · WORDS · CARD"}
+  GATE -->|fail| Q["карантин + флаг на человека"]
+  GATE -->|pass| SIG["Сигнальный слой (не блокирует):<br/>round-trip QA (6 фаз) ·<br/>второе ухо Gemini + гард Qwen3 ·<br/>faithfulness-скрин Qwen3"]
+  SIG --> CRS["По курсу:<br/>матрица урок × этап + transcript .docx + RUN-отчёт"]
+```
+
 **До синтеза (текст):**
 1. **presenter-check** — пол и характер нарратора по F0 голосовых кадров + подтверждение Whisper; двое ведущих или неоднозначный голос → стоп, выбор за человеком.
 2. **EN-adequacy** — чинит мисхиры Whisper в *исходном* английском ещё до перевода (иначе одна ошибка распознавания заражает все четыре языка).
@@ -183,6 +193,19 @@ Round-trip и LLM-судья **шумят** (особенно Whisper недос
 
 Аудио-«ухо» в обоих вариантах **остаётся на Gemini**: у Claude нет аудио-входа, а «ухо»
 слушает реальный звук дубля.
+
+```mermaid
+flowchart TB
+  SW{"DUB_LLM_ENGINE<br/>один флаг на весь прогон"}
+  SW -->|claude| CL["Вариант A · подписка Claude<br/>Sonnet 4.6 · claude -p · 0 за токен<br/>без MCP, чистый text-in/out"]
+  SW -->|по умолчанию| GM["Вариант B · Gemini API<br/>gemini-2.5-pro · платно<br/>thinking-кэп 256 = Pro по цене Flash"]
+  CL --> TR["Перевод + native-gate"]
+  GM --> TR
+  TR --> EAR["Второе ухо — всегда Gemini<br/>у Claude нет аудио-входа"]
+  TR --> MEAN["Meaning-check + faithfulness<br/>Qwen3 · бесплатно"]
+  TR --> ASR["Round-trip ASR<br/>Groq Whisper ≈8× → локальный фолбэк"]
+  TR --> TTS["Синтез речи<br/>Edge-TTS · бесплатно"]
+```
 
 ### Pro-качество по цене Flash
 
